@@ -45,7 +45,7 @@ public class Main {
             rowNumber = rowNumber + 1;
 
             //checks if a cell has no value, and if so, then will end the code.
-            if (cellValue.equals("")) {
+            if (cellValue==null) {
                 break;
             }
 
@@ -211,7 +211,6 @@ public class Main {
 
         int rowIndex = rowNumber - 1; // Row, numbers
         int cellIndex = 1; // Cell, letter. Adjust to proper placement when it is working in a new spreadsheet
-        String textToWrite = url;
         String failMessage = "Invalid Image URL or Unreachable Site.";
 
         try (InputStream fileInputStream = Files.newInputStream(Paths.get(path));
@@ -229,7 +228,7 @@ public class Main {
                 cell = row.createCell(cellIndex);
             }
 
-            cell.setCellValue(textToWrite);
+            cell.setCellValue(url);
 
             if (url == null){
                 cell.setCellValue(failMessage);
