@@ -45,7 +45,7 @@ public class Main {
             rowNumber = rowNumber + 1;
 
             //checks if a cell has no value, and if so, then will end the code.
-            if (cellValue.equals("")) {
+            if (cellValue == null) {
                 break;
             }
 
