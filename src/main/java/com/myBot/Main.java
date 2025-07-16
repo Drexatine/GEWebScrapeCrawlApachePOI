@@ -199,6 +199,7 @@ public class Main {
             int responseCode = connection.getResponseCode();
 
             return (200 <= responseCode && responseCode <= 399);
+
         } catch (Exception e) {
             return false;
         }
