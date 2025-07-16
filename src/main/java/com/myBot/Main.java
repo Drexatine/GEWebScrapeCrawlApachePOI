@@ -66,6 +66,7 @@ public class Main {
             if (url == null) {
                 System.out.println("Invalid URL or not reachable.");
                 System.out.println(" ");
+                String fail = getAddToCell("", url, rowNumber);
                 continue;
             }
 
@@ -210,6 +211,7 @@ public class Main {
         int rowIndex = rowNumber - 1; // Row, numbers
         int cellIndex = 1; // Cell, letter. Adjust to proper placement when it is working in a new spreadsheet
         String textToWrite = url;
+        String failMessage = "Invalid Image URL or Unreachable Site.";
 
         try (InputStream fileInputStream = Files.newInputStream(Paths.get(path));
              XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream)) {
@@ -227,6 +229,10 @@ public class Main {
             }
 
             cell.setCellValue(textToWrite);
+
+            if (url == null){
+                cell.setCellValue(failMessage);
+            }
 
             try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
                 xssfWorkbook.write(fileOutputStream);
