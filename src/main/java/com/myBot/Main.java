@@ -127,16 +127,20 @@ public class Main {
                         };
                     } else {
                         System.out.println("Cell is null.");
+                        return null;
                     }
                 } else {
                     System.out.println("Row is null.");
+                    return null;
                 }
             } else {
                 System.out.println("Sheet is null.");
+                return null;
             }
 
         } catch (IOException e) {
             System.err.println("An I/O error occurred: " + e.getMessage());
+            return null;
         }
 
         return cellValue;
