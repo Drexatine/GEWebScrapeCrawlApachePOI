@@ -238,7 +238,9 @@ public class Main {
                 xssfWorkbook.write(fileOutputStream);
             }
 
-            System.out.println("Image URL successfully written to cell " + (char)('A' + cellIndex) + (rowIndex + 1) + ".");
+            if (url != null){
+                System.out.println("Image URL successfully written to cell " + (char)('A' + cellIndex) + (rowIndex + 1) + ".");
+            }
 
         } catch (IOException e) {
             System.err.println("An I/O error occurred: " + e.getMessage());
