@@ -72,10 +72,10 @@ public class Main {
 
             System.out.println(url);
 
-            String done = getAddToCell("", url, rowNumber);
+            getAddToCell("", url, rowNumber);
 
             counter = counter+1;
-            if (counter==1000) {
+            if (counter==3) {
                 break;
             }
 
