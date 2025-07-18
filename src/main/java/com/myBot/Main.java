@@ -38,10 +38,10 @@ public class Main {
 
         //start loop here
         do {
-            //Limits amount code will run.
-            if (counter == 20) {
-                break;
-            }
+            //Limits amount code will run, disable if you want it to stop when it finds an open cell
+            //if (counter == 20) {
+                //break;
+            //}
             counter = counter+1;
 
             //Gets the number from the spreadsheet to look up and moves the scanner one down.
