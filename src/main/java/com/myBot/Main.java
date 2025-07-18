@@ -24,7 +24,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         //How to apply this code to another computer or spreadsheet.
-        //On lines 100 and 209, change the file locations to the new location.
+        //On lines 100 and 214, change the file locations to the new location.
 
         String cellValue;
         String url;
