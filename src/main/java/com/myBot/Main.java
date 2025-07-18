@@ -41,7 +41,7 @@ public class Main {
         do {
             //Gets the number from the spreadsheet to look up and moves the scanner one down.
             System.out.println("Loading part number.");
-            cellValue = getNumber("", rowNumber, cellNumber);
+            cellValue = getNumber(rowNumber, cellNumber);
             rowNumber = rowNumber + 1;
 
             //checks if a cell has no value, and if so, then will end the code.
@@ -61,7 +61,7 @@ public class Main {
 
             //This will go to the website and get the URL from it, and check if it is a stock URL or not.
             System.out.println("Loading website and scraping information.");
-            url = getURL("", cellValue, works);
+            url = getURL(cellValue, works);
 
             if (url == null) {
                 System.out.println("Invalid URL or not reachable.");
@@ -96,7 +96,7 @@ public class Main {
         }
     }
 
-    public static String getNumber (String args, int rowNumber, int cellNumber) {
+    public static String getNumber (int rowNumber, int cellNumber) {
         String path = "C:\\Users\\alejo\\Downloads\\apache-poi-src-5.3.0-20240625\\GEHealthcare.xlsx";
 
         String cellValue = "";
@@ -146,7 +146,7 @@ public class Main {
         return cellValue;
     }
 
-    public static String getURL(String args, String cellValue, boolean works) throws IOException {
+    public static String getURL(String cellValue, boolean works) throws IOException {
         Document doc;
 
         Objects object = new Objects();
