@@ -208,7 +208,7 @@ public class Main {
         }
     }
 
-    public static String getAddToCell (String url, int rowNumber) {
+    public static void getAddToCell (String url, int rowNumber) {
 
         String path = "C:\\Users\\alejo\\Downloads\\apache-poi-src-5.3.0-20240625\\GEHealthcare.xlsx";
 
@@ -248,6 +248,5 @@ public class Main {
         } catch (IOException e) {
             System.err.println("An I/O error occurred: " + e.getMessage());
         }
-        return url;
     }
 }
