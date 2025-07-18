@@ -39,7 +39,7 @@ public class Main {
         //start loop here
         do {
             //Limits amount code will run.
-            if (counter == 3) {
+            if (counter == 20) {
                 break;
             }
             counter = counter+1;
