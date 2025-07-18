@@ -36,6 +36,7 @@ public class Main {
         int cellNumber=0;
 
         int counter=0;
+        int loopEnd=3;
 
         //start loop here
         do {
@@ -75,7 +76,7 @@ public class Main {
             getAddToCell("", url, rowNumber);
 
             counter = counter+1;
-            if (counter==3) {
+            if (counter == loopEnd) {
                 break;
             }
 
