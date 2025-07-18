@@ -36,10 +36,15 @@ public class Main {
         int cellNumber=0;
 
         int counter=0;
-        int loopEnd=3;
 
         //start loop here
         do {
+            //Limits amount code will run.
+            counter = counter+1;
+            if (counter == 3) {
+                break;
+            }
+
             //Gets the number from the spreadsheet to look up and moves the scanner one down.
             System.out.println("Loading part number.");
             cellValue = getNumber(rowNumber, cellNumber);
@@ -74,11 +79,6 @@ public class Main {
             System.out.println(url);
 
             getAddToCell("", url, rowNumber);
-
-            counter = counter+1;
-            if (counter == loopEnd) {
-                break;
-            }
 
             System.out.println(" ");
 
