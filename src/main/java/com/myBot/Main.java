@@ -105,7 +105,7 @@ public class Main {
     /**
      * This connects to the Spreadsheet and collects the value of a cell
      * @param rowNumber What row to look in
-     * @param cellNumber What the cell to look in
+     * @param cellNumber What cell to look in
      * @return The value of the cell
      */
     public static String getNumber (int rowNumber, int cellNumber) {
