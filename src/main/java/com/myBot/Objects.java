@@ -10,5 +10,4 @@ public class Objects {
     public String getImage() {
         return image;
     }
-
 }
