@@ -24,8 +24,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         //How to apply this code to another computer or spreadsheet.
-        //On lines 100 and 213, change the file locations to the new location.
+        //On lines 113 and 239, change the file locations to the new location.
 
+
+        //Declaring variables
         String cellValue;
         String url;
 
@@ -56,18 +58,17 @@ public class Main {
 
             //checks if the PN is numeric or not, and refactors it for proper search results if it is.
             numeric = getIsNumeric(cellValue);
-
             if (numeric) {
                 DecimalFormat decimalFormat = new DecimalFormat("0.#####");
                 cellValue = decimalFormat.format(Double.valueOf(cellValue));
             }
-
             System.out.println(cellValue);
 
             //This will go to the website and get the URL from it, and check if it is a stock URL or not.
             System.out.println("Loading website and scraping information.");
             url = getURL(cellValue);
 
+            //Prints message to cell if URL was a stock photo/missing, or if site is unreachable
             if (url == null) {
                 System.out.println("Invalid URL or not reachable.");
                 System.out.println(" ");
@@ -77,6 +78,7 @@ public class Main {
 
             System.out.println(url);
 
+            //Adds image url to corresponding cell
             getAddToCell(url, rowNumber);
 
             System.out.println(" ");
@@ -87,6 +89,11 @@ public class Main {
 
     }
 
+    /**
+     * This checks if a part number is numeric or not.
+     * @param str the cell value
+     * @return true or false
+     */
     public static boolean getIsNumeric(String str) {
         try {
             Double.parseDouble(str);
@@ -96,6 +103,12 @@ public class Main {
         }
     }
 
+    /**
+     * This connects to the Spreadsheet and collects the value of a cell
+     * @param rowNumber What row to look in
+     * @param cellNumber What cell to look in
+     * @return The value of the cell
+     */
     public static String getNumber (int rowNumber, int cellNumber) {
         String path = "C:\\Users\\alejo\\Downloads\\apache-poi-src-5.3.0-20240625\\GEHealthcare.xlsx";
 
@@ -137,15 +150,19 @@ public class Main {
                 System.out.println("Sheet is null.");
                 return null;
             }
-
         } catch (IOException e) {
             System.err.println("An I/O error occurred: " + e.getMessage());
             return null;
         }
-
         return cellValue;
     }
 
+    /**
+     * This goes to the parts GE Webshop page and collects the image URl
+     * @param cellValue The collected part number from the spreadsheet
+     * @return The Images Url, or null
+     * @throws IOException Protects the code incase it can't connect
+     */
     public static String getURL(String cellValue) throws IOException {
         Document doc;
 
@@ -184,13 +201,17 @@ public class Main {
             return null;
         }
 
-        //System.out.println(name + "  https://services.gehealthcare.com" + url);
         url = "https://services.gehealthcare.com" + url;
 
         return url;
     }
 
 
+    /**
+     * This test if the site exist or not
+     * @param urlString The site to go to
+     * @return if it connected or not
+     */
     private static boolean getValidURL(String urlString) {
         try {
             URI uri = new URI(urlString);
@@ -208,6 +229,11 @@ public class Main {
         }
     }
 
+    /**
+     * This will add the image URL or a fail message to the cell of the part
+     * @param url The parts image URL
+     * @param rowNumber Where to put the link
+     */
     public static void getAddToCell (String url, int rowNumber) {
 
         String path = "C:\\Users\\alejo\\Downloads\\apache-poi-src-5.3.0-20240625\\GEHealthcare.xlsx";
