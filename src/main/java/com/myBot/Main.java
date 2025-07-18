@@ -84,7 +84,7 @@ public class Main {
 
         } while (true);
 
-        System.out.println("It's finally over. Made by Alexander J. Simkins.");
+        System.out.println("Code has ended");
 
     }
 
