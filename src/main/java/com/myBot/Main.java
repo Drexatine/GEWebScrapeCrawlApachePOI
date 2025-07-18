@@ -39,9 +39,9 @@ public class Main {
         //start loop here
         do {
             //Limits amount code will run, disable if you want it to stop when it finds an open cell
-            //if (counter == 20) {
-                //break;
-            //}
+            if (counter == 3) {
+                break;
+            }
             counter = counter+1;
 
             //Gets the number from the spreadsheet to look up and moves the scanner one down.
@@ -174,7 +174,7 @@ public class Main {
         Elements objectElements = doc.select("div.productDetailsPage");
 
         for (Element objectElement : objectElements) {
-            object.setImage(objectElement.selectFirst("img").attr("src"));
+            object.setImage(java.util.Objects.requireNonNull(objectElement.selectFirst("img")).attr("src"));
         }
 
         String url = object.getImage();
