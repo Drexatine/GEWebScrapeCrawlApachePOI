@@ -30,7 +30,6 @@ public class Main {
         String url;
 
         boolean numeric;
-        boolean works = false;
 
         int rowNumber=0;
         int cellNumber=0;
@@ -40,10 +39,10 @@ public class Main {
         //start loop here
         do {
             //Limits amount code will run.
-            counter = counter+1;
             if (counter == 3) {
                 break;
             }
+            counter = counter+1;
 
             //Gets the number from the spreadsheet to look up and moves the scanner one down.
             System.out.println("Loading part number.");
@@ -67,7 +66,7 @@ public class Main {
 
             //This will go to the website and get the URL from it, and check if it is a stock URL or not.
             System.out.println("Loading website and scraping information.");
-            url = getURL(cellValue, works);
+            url = getURL(cellValue);
 
             if (url == null) {
                 System.out.println("Invalid URL or not reachable.");
@@ -147,13 +146,13 @@ public class Main {
         return cellValue;
     }
 
-    public static String getURL(String cellValue, boolean works) throws IOException {
+    public static String getURL(String cellValue) throws IOException {
         Document doc;
 
         Objects object = new Objects();
 
         // Validate the URL first
-        works = getValidURL("https://services.gehealthcare.com/gehcstorefront/p/" + cellValue);
+        boolean works = getValidURL("https://services.gehealthcare.com/gehcstorefront/p/" + cellValue);
 
         if (!works) {
             return null;
@@ -175,10 +174,8 @@ public class Main {
 
         for (Element objectElement : objectElements) {
             object.setImage(objectElement.selectFirst("img").attr("src"));
-            object.setName(objectElement.selectFirst("b").text());
         }
 
-        String name = object.getName();
         String url = object.getImage();
 
         // Check if url is null before using equals method
