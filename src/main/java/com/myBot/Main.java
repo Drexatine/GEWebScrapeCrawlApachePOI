@@ -71,13 +71,13 @@ public class Main {
             if (url == null) {
                 System.out.println("Invalid URL or not reachable.");
                 System.out.println(" ");
-                getAddToCell("", url, rowNumber);
+                getAddToCell(url, rowNumber);
                 continue;
             }
 
             System.out.println(url);
 
-            getAddToCell("", url, rowNumber);
+            getAddToCell(url, rowNumber);
 
             System.out.println(" ");
 
@@ -158,8 +158,9 @@ public class Main {
             return null;
         }
 
+        //Test to see if it's safe to connect to the site
         try {
-            doc = Jsoup.connect("https://services.gehealthcare.com/gehcstorefront/p/" + cellValue).get();
+            Jsoup.connect("https://services.gehealthcare.com/gehcstorefront/p/" + cellValue).get();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -207,13 +208,12 @@ public class Main {
         }
     }
 
-    public static String getAddToCell (String args, String url, int rowNumber) {
+    public static String getAddToCell (String url, int rowNumber) {
 
         String path = "C:\\Users\\alejo\\Downloads\\apache-poi-src-5.3.0-20240625\\GEHealthcare.xlsx";
 
         int rowIndex = rowNumber - 1; // Row, numbers
         int cellIndex = 1; // Cell, letter. Adjust to proper placement when it is working in a new spreadsheet
-        String textToWrite = url;
         String failMessage = "Invalid Image URL or Unreachable Site.";
 
         try (InputStream fileInputStream = Files.newInputStream(Paths.get(path));
@@ -231,7 +231,7 @@ public class Main {
                 cell = row.createCell(cellIndex);
             }
 
-            cell.setCellValue(textToWrite);
+            cell.setCellValue(url);
 
             if (url == null){
                 cell.setCellValue(failMessage);
