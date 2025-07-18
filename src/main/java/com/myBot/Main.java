@@ -66,7 +66,7 @@ public class Main {
             if (url == null) {
                 System.out.println("Invalid URL or not reachable.");
                 System.out.println(" ");
-                String fail = getAddToCell("", url, rowNumber);
+                getAddToCell("", url, rowNumber);
                 continue;
             }
 
