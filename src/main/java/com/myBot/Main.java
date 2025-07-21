@@ -84,7 +84,7 @@ public class Main {
 
         } while (true);
 
-        System.out.println("Code has ended");
+        System.out.println("Code has ended after " +counter+ " times looped.");
 
     }
 
