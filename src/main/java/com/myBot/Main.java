@@ -40,7 +40,7 @@ public class Main {
         //start loop here
         do {
             //Limits amount code will run, disable if you want it to stop when it finds an open cell
-            if (counter == 3) {
+            if (counter == 30) {
                 break;
             }
             counter = counter+1;
