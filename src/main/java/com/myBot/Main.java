@@ -40,7 +40,7 @@ public class Main {
         //start loop here
         do {
             //Limits amount code will run, disable if you want it to stop when it finds an open cell
-            if (counter == 3) {
+            if (counter == 100) {
                 break;
             }
             counter = counter+1;
@@ -69,7 +69,7 @@ public class Main {
 
             //Prints message to cell if URL was a stock photo/missing, or if site is unreachable
             if (url == null) {
-                System.out.println("Invalid URL or not reachable.");
+                System.out.println("Invalid part number");
                 System.out.println(" ");
                 getAddToCell(url, rowNumber);
                 continue;
@@ -195,8 +195,9 @@ public class Main {
 
         String url = object.getImage();
 
-        // Check if url is null before using equals method
-        if (url == null || url.equals("/gehcstorefront/_ui/desktop/theme-green/images/missing-product-new-300x300.png") || url.equals("/gehcstorefront/_ui/desktop/theme-green/images/missing-product-new-2025-300x300.jpg")) {
+        url = checkURl(url);
+
+        if (url == null){
             return null;
         }
 
@@ -272,6 +273,33 @@ public class Main {
 
         } catch (IOException e) {
             System.err.println("An I/O error occurred: " + e.getMessage());
+        }
+    }
+
+    public static String checkURl (String url){
+
+        //This will check if the URL is a stock photo by using the keyword "missing"
+        boolean containsMissing;
+
+        try {
+            containsMissing = url.contains("missing");
+        } catch (NullPointerException e){
+            System.out.println("Unreachable site");
+            url = null;
+            return url;
+        }
+
+        if (containsMissing){
+            System.out.println("Stock image");
+            url = null;
+            return url;
+        }
+
+        // Check if url is null before using equals method
+        if (url == null) {
+            return url;
+        } else {
+            return url;
         }
     }
 }
