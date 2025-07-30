@@ -196,13 +196,17 @@ public class Main {
         String url = object.getImage();
 
         // Check if url is null before using equals method
-        if (url == null || url.equals("/gehcstorefront/_ui/desktop/theme-green/images/missing-product-new-300x300.png") || url.equals("/gehcstorefront/_ui/desktop/theme-green/images/missing-product-new-2025-300x300.jpg")) {
+
+        if (url == null){
+            System.out.println("No results");
             return null;
+        } else if (url.contains("missing")) {
+            System.out.println("Stock image");
+            return null;
+        }else {
+            url = "https://services.gehealthcare.com" + url;
+            return url;
         }
-
-        url = "https://services.gehealthcare.com" + url;
-
-        return url;
     }
 
 
