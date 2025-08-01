@@ -21,64 +21,71 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Main {
-    public static void main(String[] args) {
-        String path = "C:\\Users\\alejo\\Downloads\\apache-poi-src-5.3.0-20240625\\GEHealthcare.xlsx";
-        String sheetName = "Sheet1"; // or just use getSheetAt(0)
+    public static void main(String[] args) throws IOException {
 
-        try (InputStream inputStream = Files.newInputStream(Paths.get(path));
-             XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
+        //How to apply this code to another computer or spreadsheet.
+        //On lines 112 and 238, change the file locations to the new location.
 
-            Sheet sheet = workbook.getSheet(sheetName);
-            if (sheet == null) {
-                System.out.println("Sheet not found!");
-                return;
+        //Declaring variables
+        String cellValue;
+        String url;
+
+        boolean numeric;
+
+        int rowNumber=0;
+        int cellNumber=0;
+
+        int counter=0;
+
+        //start loop here
+        do {
+            //Limits amount code will run, disable if you want it to stop when it finds an open cell
+            if (counter == 3) {
+                break;
+            }
+            counter = counter+1;
+
+            //Gets the number from the spreadsheet to look up and moves the scanner one down.
+            System.out.println("Loading part number.");
+            cellValue = getNumber(rowNumber, cellNumber);
+            rowNumber = rowNumber + 1;
+
+            //checks if a cell has no value, and if so, then will end the code.
+            if (cellValue == null) {
+                break;
             }
 
-            int rowNumber = 0;
-            int cellNumber = 0;
-            int counter = 0;
+            //checks if the PN is numeric or not, and refactors it for proper search results if it is.
+            numeric = getIsNumeric(cellValue);
+            if (numeric) {
+                DecimalFormat decimalFormat = new DecimalFormat("0.#####");
+                cellValue = decimalFormat.format(Double.valueOf(cellValue));
+            }
+            System.out.println(cellValue);
 
-            while (true) {
-                if (counter == 30) break;
-                counter++;
+            //This will go to the website and get the URL from it, and check if it is a stock URL or not.
+            System.out.println("Loading website and scraping information.");
+            url = getURL(cellValue);
 
-                System.out.println("Loading part number.");
-                String cellValue = getNumber(sheet, rowNumber, cellNumber);
-                rowNumber++;
-
-                if (cellValue == null) break;
-
-                boolean numeric = getIsNumeric(cellValue);
-                if (numeric) {
-                    DecimalFormat decimalFormat = new DecimalFormat("0.#####");
-                    cellValue = decimalFormat.format(Double.parseDouble(cellValue));
-                }
-                System.out.println(cellValue);
-
-                System.out.println("Loading website and scraping information.");
-                String url = getURL(cellValue);
-
-                if (url == null) {
-                    System.out.println("Invalid URL or not reachable.\n");
-                    addToCell(sheet, rowNumber - 1, 1, null);  // use row index directly
-                    continue;
-                }
-
-                System.out.println(url);
-                addToCell(sheet, rowNumber - 1, 1, url);
+            //Prints message to cell if URL was a stock photo/missing, or if site is unreachable
+            if (url == null) {
+                System.out.println("Invalid URL or not reachable.");
                 System.out.println(" ");
+                getAddToCell(url, rowNumber);
+                continue;
             }
 
-            // After processing all rows, write back to file
-            try (FileOutputStream fileOut = new FileOutputStream(path)) {
-                workbook.write(fileOut);
-            }
+            System.out.println(url);
 
-            System.out.println("Code has ended after " + counter + " times looped.");
+            //Adds image url to corresponding cell
+            getAddToCell(url, rowNumber);
 
-        } catch (IOException e) {
-            System.err.println("Failed to open workbook: " + e.getMessage());
-        }
+            System.out.println(" ");
+
+        } while (true);
+
+        System.out.println("Code has ended after " +counter+ " times looped.");
+
     }
 
     /**
@@ -101,57 +108,101 @@ public class Main {
      * @param cellNumber What cell to look in
      * @return The value of the cell
      */
-    public static String getNumber(Sheet sheet, int rowNumber, int cellNumber) {
-        Row row = sheet.getRow(rowNumber);
-        if (row == null) return null;
+    public static String getNumber (int rowNumber, int cellNumber) {
+        String path = "C:\\Users\\alejo\\Downloads\\apache-poi-src-5.3.0-20240625\\GEHealthcare.xlsx";
 
-        Cell cell = row.getCell(cellNumber);
-        if (cell == null) return null;
+        String cellValue = "";
 
-        return switch (cell.getCellType()) {
-            case STRING -> cell.getStringCellValue();
-            case NUMERIC -> String.valueOf(cell.getNumericCellValue());
-            case BLANK -> null;
-            default -> cell.toString();
-        };
+        try (InputStream fileInputStream = Files.newInputStream(Paths.get(path));
+             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream)) {
+
+            Sheet sheet = xssfWorkbook.getSheet("Sheet1");
+            if (sheet != null) {
+                Row row = sheet.getRow(rowNumber);
+                if (row != null) {
+                    Cell cell = row.getCell(cellNumber);
+                    if (cell != null) {
+                        cellValue = switch (cell.getCellType()) {
+                            case STRING -> {
+                                System.out.println("String value: " + cell.getStringCellValue());
+                                yield cell.getStringCellValue();
+                            }
+                            case NUMERIC -> {
+                                System.out.println("Numeric value: " + cell.getNumericCellValue());
+                                yield cell.toString();
+                            }
+                            case BLANK -> {
+                                System.out.println("Blank cell");
+                                yield null;
+                            }
+                            default -> cellValue;
+                        };
+                    } else {
+                        System.out.println("Cell is null.");
+                        return null;
+                    }
+                } else {
+                    System.out.println("Row is null.");
+                    return null;
+                }
+            } else {
+                System.out.println("Sheet is null.");
+                return null;
+            }
+        } catch (IOException e) {
+            System.err.println("An I/O error occurred: " + e.getMessage());
+            return null;
+        }
+        return cellValue;
     }
 
     /**
      * This goes to the parts GE Webshop page and collects the image URl
+     * @param cellValue The collected part number from the spreadsheet
      * @return The Images Url, or null
      * @throws IOException Protects the code incase it can't connect
      */
-    public static String getURL(String partNumber) {
-        String baseUrl = "https://services.gehealthcare.com/gehcstorefront/p/";
-        String fullUrl = baseUrl + partNumber;
+    public static String getURL(String cellValue) throws IOException {
+        Document doc;
 
-        try {
-            // Make a single connection and parse HTML
-            Document doc = Jsoup.connect(fullUrl)
-                    .userAgent("Mozilla/5.0")
-                    .header("Accept-Language", "*")
-                    .timeout(50000) // optional timeout
-                    .get();
+        Objects object = new Objects();
 
-            Elements productDetails = doc.select("div.productDetailsPage img");
+        // Validate the URL first
+        boolean works = getValidURL("https://services.gehealthcare.com/gehcstorefront/p/" + cellValue);
 
-            if (productDetails.isEmpty()) {
-                System.out.println("No image found.");
-                return null;
-            }
-
-            String src = productDetails.first().attr("src");
-            if (src == null || src.contains("missing")) {
-                System.out.println("Stock or missing image.");
-                return null;
-            }
-
-            return "https://services.gehealthcare.com" + src;
-
-        } catch (IOException e) {
-            System.err.println("Failed to fetch page: " + e.getMessage());
+        if (!works) {
             return null;
         }
+
+        //Test to see if it's safe to connect to the site
+        try {
+            Jsoup.connect("https://services.gehealthcare.com/gehcstorefront/p/" + cellValue).get();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        doc = Jsoup
+                .connect("https://services.gehealthcare.com/gehcstorefront/p/" + cellValue)
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+                .header("Accept-Language", "*")
+                .get();
+
+        Elements objectElements = doc.select("div.productDetailsPage");
+
+        for (Element objectElement : objectElements) {
+            object.setImage(java.util.Objects.requireNonNull(objectElement.selectFirst("img")).attr("src"));
+        }
+
+        String url = object.getImage();
+
+        // Check if url is null before using equals method
+        if (url == null || url.equals("/gehcstorefront/_ui/desktop/theme-green/images/missing-product-new-300x300.png") || url.equals("/gehcstorefront/_ui/desktop/theme-green/images/missing-product-new-2025-300x300.jpg")) {
+            return null;
+        }
+
+        url = "https://services.gehealthcare.com" + url;
+
+        return url;
     }
 
 
@@ -180,36 +231,47 @@ public class Main {
     /**
      * This will add the image URL or a fail message to the cell of the part
      * @param url The parts image URL
+     * @param rowNumber Where to put the link
      */
-    public static void addToCell(Sheet sheet, int rowIndex, int cellIndex, String url) {
+    public static void getAddToCell (String url, int rowNumber) {
+
+        String path = "C:\\Users\\alejo\\Downloads\\apache-poi-src-5.3.0-20240625\\GEHealthcare.xlsx";
+
+        int rowIndex = rowNumber - 1; // Row, numbers
+        int cellIndex = 1; // Cell, letter. Adjust to proper placement when it is working in a new spreadsheet
         String failMessage = "Invalid Image URL or Unreachable Site.";
 
-        Row row = sheet.getRow(rowIndex);
-        if (row == null) row = sheet.createRow(rowIndex);
+        try (InputStream fileInputStream = Files.newInputStream(Paths.get(path));
+             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream)) {
 
-        Cell cell = row.getCell(cellIndex);
-        if (cell == null) cell = row.createCell(cellIndex);
+            Sheet sheet = xssfWorkbook.getSheetAt(0);
 
-        cell.setCellValue(url != null ? url : failMessage);
+            Row row = sheet.getRow(rowIndex);
+            if (row == null) {
+                row = sheet.createRow(rowIndex);
+            }
 
-        if (url != null) {
-            System.out.println("Image URL successfully written to cell " +
-                    (char) ('A' + cellIndex) + (rowIndex + 1) + ".");
-        }
-    }
+            Cell cell = row.getCell(cellIndex);
+            if (cell == null) {
+                cell = row.createCell(cellIndex);
+            }
 
-    public class partResult {
-        int rowNumber;
-        String partNumber;
-        String imageURL;
+            cell.setCellValue(url);
 
-        public partResult(int rowNumber, String partNumber) {
-            this.rowNumber = rowNumber;
-            this.partNumber = partNumber;
-        }
+            if (url == null){
+                cell.setCellValue(failMessage);
+            }
 
-        public void setImageURL(String imageURL) {
-            this.imageURL=imageURL;
+            try (FileOutputStream fileOutputStream = new FileOutputStream(path)) {
+                xssfWorkbook.write(fileOutputStream);
+            }
+
+            if (url != null){
+                System.out.println("Image URL successfully written to cell " + (char)('A' + cellIndex) + (rowIndex + 1) + ".");
+            }
+
+        } catch (IOException e) {
+            System.err.println("An I/O error occurred: " + e.getMessage());
         }
     }
 }
